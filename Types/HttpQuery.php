@@ -63,6 +63,7 @@ class HttpQuery {
      * @SuppressWarnings("PHPMD.StaticAccess")
      */
     public static function createConditionals(array $tokens) {
+
         if(!isset($tokens['WHERE'])) return '';
 
         $tableAlias = Table::alias($tokens);
@@ -70,11 +71,16 @@ class HttpQuery {
 
         // Get WHERE conditions as string including table alias and primary key column if present
         $sqlWhereString = array_reduce($tokens['WHERE'], function($query, $token) use ($tableAlias) {
-            $baseExpr = str_replace(['"', '\''], '', str_replace('OR', '|', str_replace('AND', '&', $token['base_expr'])));
+            if (strpos($token['base_expr'], 'sqlfilters') >= 0) {
+                $baseExpr = str_replace('#', '\'',str_replace(['"', '\''], '', $token['base_expr']));
+            } else {
+                $baseExpr = str_replace(['"', '\''], '', str_replace('OR', '|', str_replace('AND', '&', $token['base_expr'])));
 
-            return $query . ($token['expr_type'] == 'const' ? urlencode($baseExpr) : $baseExpr);
+                //return $query . ($token['expr_type'] == 'const' ? urlencode($baseExpr) : $baseExpr);
+            }
+            return $query . ($token['expr_type'] == 'const' ? rawurlencode($baseExpr) : $baseExpr);
         });
-
+        
         // Remove primary key column before removing table alias and returning
         return str_replace($tableAlias . '.', '', preg_replace('/' . preg_quote($primaryKeyColumn) . '=[\w\d]*&*/', '', $sqlWhereString));
     }

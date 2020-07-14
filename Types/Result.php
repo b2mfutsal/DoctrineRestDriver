@@ -57,7 +57,7 @@ class Result {
         $responseCode = $response->getStatusCode();
 
         $content = $responseCode === Response::HTTP_NO_CONTENT ? [] : Format::create($options)->decode($response->getContent());
-
+        $content = is_numeric($content) ? [ 'id' => $content] : $content;
         $this->result = $this->createResult($tokens, $requestMethod, $responseCode, $content);
         $this->id     = $this->createId($tokens);
     }
@@ -103,6 +103,7 @@ class Result {
     private function createResult(array $tokens, $requestMethod, $responseCode, array $content = null) {
         if($responseCode >= 400 && $responseCode < 600) return [];
         if ($requestMethod === HttpMethods::DELETE)     return [];
+
         $result = $requestMethod === HttpMethods::GET ? SelectResult::create($tokens, $content) : $content;
         krsort($result);
 

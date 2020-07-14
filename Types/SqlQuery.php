@@ -45,7 +45,6 @@ class SqlQuery {
 
         return array_reduce($params, function($query, $param) {
             $param = self::getStringRepresentation($param);
-
             return strpos($query, '?') ? substr_replace($query, $param, strpos($query, '?'), strlen('?')) : $query;
         }, $query);
     }
@@ -61,7 +60,7 @@ class SqlQuery {
     {
         if (is_int($param) || is_float($param)) return $param;
         if (is_numeric($param))                 return (float)$param;
-        if (is_string($param))                  return '\'' . $param . '\'';
+        if (is_string($param))                  return '\'' . addslashes($param) . '\'';
         if ($param === true)                    return 'true';
         if ($param === false)                   return 'false';
         if ($param === null)                    return 'null';

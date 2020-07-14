@@ -33,6 +33,7 @@ class Json implements Formatter {
      * @return string
      */
     public function encode(array $values) {
+        $values = array_map('stripslashes', $values);
         return json_encode($values);
     }
 
