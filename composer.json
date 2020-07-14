@@ -1,5 +1,5 @@
 {
-  "name": "circle/doctrine-rest-driver",
+  "name": "b2mfutsal/doctrine-rest-driver",
   "description": "Use a REST API as if it was your local database",
   "type": "library",
   "authors": [
